@@ -1,0 +1,13 @@
+```{r message=FALSE}
+library(tidyverse)
+
+```
+
+```{r}
+cars
+View(cars)
+```
+
+```{r}
+mpg
+```
