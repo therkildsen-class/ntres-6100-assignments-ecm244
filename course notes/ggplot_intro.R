@@ -50,3 +50,8 @@ ggplot(data=mpg, mapping = aes(x=displ, y=hwy)) +
 #Moving mqpping to the ggplot level makes x=displ and y=hw the default
 # the facet wrap function splits the data based on year 
 #Make sure to add + for every layer 
+
+ggsave(filename = "MPG Plot 2.png", width = 8, height = 4)
+
+#You could also just have the file name first because it is the first argument 
+# expected and it expects the first plot
