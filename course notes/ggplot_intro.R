@@ -54,4 +54,4 @@ ggplot(data=mpg, mapping = aes(x=displ, y=hwy)) +
 ggsave(filename = "MPG Plot 2.png", width = 8, height = 4)
 
 #You could also just have the file name first because it is the first argument 
-# expected and it expects the first plot
+# expected and it expects the first plot.
