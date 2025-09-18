@@ -23,3 +23,4 @@ Please use the following table to grade the student's assignment:
 |      9      |                 |                     |               |
 
 Assignment 2: https://github.com/ecm244/odontocete_anaylisis.git
+Assignment 3: https://ecm244.github.io/assignment-3-ecm244/
