@@ -90,3 +90,103 @@ vacc |> filter(date == max(vacc$date)) |>
   select(country_region,continent_name,people_at_least_one_dose,doses_admin,population)|>
   mutate(vaxx_percentage = round (people_at_least_one_dose/population,2)) |>
   filter(vaxx_percentage > 0.9) |> arrange(-vaxx_percentage) |> head(5)
+
+# Summarize Code ----------------------------------------------------------
+
+#Shortcut for the pipe symbol is control shift m
+
+coronavirus |> 
+  filter(type == "confirmed") |> 
+  summarize(total= mean(cases)) |> 
+  
+coronavirus |> 
+  filter(type == "confirmed") |>
+  group_by(country) |> 
+  summarize(total= sum(cases), n = n()) |> 
+  arrange(-total)
+
+coronavirus |> 
+  group_by(date, type) |> 
+  summarize(total= sum(cases)) |> 
+  filter(date == "2023-01-01")
+
+coronavirus |> 
+  group_by(date) |> 
+  filter(type == "death") |> 
+  summarize(total= sum(cases)) |> 
+  arrange (-total) |> 
+
+coronavirus |> 
+  filter(type == "confirmed") |> 
+  group_by(date) |> 
+  summarize(cases = sum(cases)) |> 
+ggplot(mapping = aes(x=date, y=cases)) + 
+  geom_line()
+
+gg_base <- coronavirus |> 
+  filter(type == "confirmed") |> 
+  group_by(date) |> 
+  summarize(cases = sum(cases)) |> 
+  ggplot(mapping = aes(x=date, y=cases)) 
+
+gg_base + geom_point()
+
+gg_base + geom_col(color="red")
+
+gg_base + geom_area(color="red", fill="red")
+
+gg_base + geom_line(color="purple", linetype="dashed")
+
+gg_base + geom_point(color="purple", shape=17)
+
+#google different shapes
+
+gg_base + geom_point(color="purple", shape=7)
+
+gg_base + geom_point(color="purple", shape=17, alpha=0.4, size=4)
+
+#alpha is the transparency of a graph. From 0 to 1
+
+gg_base + geom_point(mapping= aes(size=cases, color=cases),alpha=0.4) + 
+ theme_light()
+
+gg_base + geom_point(mapping= aes(size=cases, color=cases),alpha=0.4) + 
+  theme(legend.background = element_rect(
+    fill = "cyan",
+    color = "purple",
+    linewidth=1
+  ))
+
+gg_base + geom_point(mapping= aes(size=cases, color=cases),alpha=0.4) + 
+  theme(legend.position= "none")
+
+gg_base + geom_point(mapping= aes(size=cases, color=cases),alpha=0.4) + 
+  theme_light() +
+  labs(x ="Date", 
+       y ="Total Confirmed Cases",
+       title = "Daily Counts of Covid Cases", 
+       subtitle = "Global Sums")
+
+gg_base + geom_point(mapping= aes(size=cases, color=cases),alpha=0.4) + 
+  theme_light() +
+  labs(x ="Date", 
+       y ="Total Confirmed Cases",
+       title = str_c("Daily Counts of Covid Cases ", max(coronavirus$date)), 
+       subtitle = "Global Sums")
+
+coronavirus |> 
+  filter(type == "confirmed") |> 
+  group_by(date,country) |> 
+  summarize(cases = sum(cases)) |> 
+  ggplot(mapping = aes(x=date, y=cases, color=country)) + 
+  geom_line()
+
+top5 <- coronavirus |> 
+  filter(type == "confirmed") |> 
+  group_by(country) |> 
+  summarize(cases = sum(cases)) |> 
+  arrange(-cases) |> 
+  head(5) |> 
+  pull(country) |> 
+ggplot(mapping = aes(x=date, y=cases, color=top5)) + 
+  geom_line()
