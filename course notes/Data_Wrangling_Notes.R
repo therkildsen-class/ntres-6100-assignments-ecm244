@@ -91,13 +91,13 @@ vacc |> filter(date == max(vacc$date)) |>
   mutate(vaxx_percentage = round (people_at_least_one_dose/population,2)) |>
   filter(vaxx_percentage > 0.9) |> arrange(-vaxx_percentage) |> head(5)
 
-# Summarize Code ----------------------------------------------------------
+# Summarize Code --------------------------------x--------------------------
 
 #Shortcut for the pipe symbol is control shift m
 
 coronavirus |> 
   filter(type == "confirmed") |> 
-  summarize(total= mean(cases)) |> 
+  summarize(total= mean(cases)) 
   
 coronavirus |> 
   filter(type == "confirmed") |>
@@ -187,6 +187,11 @@ top5 <- coronavirus |>
   summarize(cases = sum(cases)) |> 
   arrange(-cases) |> 
   head(5) |> 
-  pull(country) |> 
-ggplot(mapping = aes(x=date, y=cases, color=top5)) + 
-  geom_line()
+  pull(country)  
+  
+coronavirus |> 
+  filter(type=="confirmed", country %in% top5)|> 
+  summarize(cases = sum(cases)) |> 
+  ggplot+ 
+  geom_line(mapping = aes(x=date, y=cases, color=country)) +
+  facet_wrap(~country, ncol = 1)
