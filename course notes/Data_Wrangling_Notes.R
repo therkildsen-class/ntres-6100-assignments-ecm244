@@ -183,7 +183,7 @@ coronavirus |>
 
 top5 <- coronavirus |> 
   filter(type == "confirmed") |> 
-  group_by(country) |> 
+  group_by(date,country) |> 
   summarize(cases = sum(cases)) |> 
   arrange(-cases) |> 
   head(5) |> 
@@ -191,7 +191,8 @@ top5 <- coronavirus |>
   
 coronavirus |> 
   filter(type=="confirmed", country %in% top5)|> 
+  group_by(date,country) |> 
   summarize(cases = sum(cases)) |> 
-  ggplot+ 
+  ggplot() +
   geom_line(mapping = aes(x=date, y=cases, color=country)) +
   facet_wrap(~country, ncol = 1)
