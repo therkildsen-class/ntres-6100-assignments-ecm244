@@ -1,0 +1,128 @@
+---
+title: "Lab 5"
+format: gfm
+editor: visual
+---
+
+```{r include=FALSE}
+library(tidyverse)
+library(knitr)
+
+titanic <- read_csv("https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/Titanic.csv")
+
+view(titanic)
+```
+
+```{r}
+titanic_total_count <- titanic |> count() 
+#We know about 891 passengers and crew
+```
+
+```{r}
+titanic_survived <- titanic |> filter(Survived =="1") |> count() 
+
+#342 survived
+
+titanic_not_survived <- titanic |> filter(Survived =="0") |> count() 
+
+#549 did not
+```
+
+```{r}
+survival_rate=titanic_survived/titanic_total_count
+
+#Survival rate was 38%
+```
+
+```{r}
+titanic |> 
+group_by(Sex,Pclass) |> 
+ggplot() +
+geom_bar(mapping = aes(x=Pclass)) +
+facet_wrap(~Sex,nrow=2)
+```
+
+```{r}
+titanic |> 
+group_by(Sex,Survived) |> 
+  mutate(Survived = ifelse(Survived==0, "no", "yes")) |> 
+ggplot() +
+geom_bar(mapping = aes(x=Survived))+
+facet_wrap(~Sex,nrow=2) + labs(x="Survival", y="Number of Passengers")
+```
+
+```{r}
+titanic |> 
+filter(Age != "NA") |> 
+#count() |> 
+ggplot() + geom_histogram(aes(x=Age))
+```
+
+```{r}
+#Distribution per ticket class
+
+titanic |> 
+filter(Age != "NA") |> 
+group_by(Pclass) |> 
+ggplot() + geom_histogram(aes(x=Age)) +
+facet_wrap(~Pclass,nrow = 3)
+```
+
+```{r}
+#Distribution per sex
+
+titanic |> 
+filter(Age != "NA") |> 
+group_by(Sex) |> 
+ggplot() + geom_histogram(aes(x=Age)) +
+facet_wrap(~Sex,nrow = 2)
+```
+
+```{r}
+titanic |> 
+group_by(Sex,Survived,Age,Pclass) |> 
+  mutate(Survived = ifelse(Survived==0, "no", "yes")) |> 
+ggplot() +
+geom_histogram(mapping = aes(x=Age,color=Survived))+
+facet_grid(rows = vars(Sex), cols=vars(Pclass) ) + labs(x="Age", y="Number of Passengers")
+```
+
+```{r}
+titanic |> 
+mutate(family_members=round(Parch+SibSp,1)) |> 
+ggplot()+geom_histogram(mapping=aes(x=family_members))+labs(x="Number of Family Members",y="Passengers")
+
+#Most travelers were solo
+```
+
+```{r}
+titanic |> 
+mutate(family_members=round(Parch+SibSp,1)) |> 
+ggplot()+geom_histogram(mapping=aes(x=family_members))+labs(x="Number of Family Members",y="Passengers") +facet_grid(cols =vars(Pclass),rows=vars(Sex))
+
+#3rd class had the most women traveling solo
+```
+
+```{r}
+titanic |> 
+mutate(family_members=round(Parch+SibSp,1)) |> 
+ggplot()+geom_histogram(mapping=aes(x=family_members))+labs(x="Number of Family Members",y="Passengers") +facet_wrap(~Pclass,nrow = 3)
+
+#The biggest families chose 3rd class
+```
+
+```{r}
+titanic |> 
+group_by(Ticket) |> 
+mutate(n_tickets=n(), fare_per_ticket=Fare/n_tickets)|> 
+ungroup()|> 
+summarize(average_fare=mean(fare_per_ticket))
+```
+
+
+```{r}
+titanic |> 
+group_by(Ticket,Pclass) |> mutate(n_tickets=n(), fare_per_ticket=Fare/n_tickets) |> 
+ggplot() + geom_histogram(mapping = aes(x=fare_per_ticket)) + facet_wrap(~Pclass,nrow = 3)+ labs(title = "Fare Per Ticket by Class")
+```
+
