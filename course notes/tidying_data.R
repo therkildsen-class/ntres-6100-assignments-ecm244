@@ -47,6 +47,33 @@ table3_tidy <- table3 |>
 # sep="/", convert makes them integers
 
 table5 <- table3 |> 
-separate(year, into=c("century","year"), sep=2))
+separate(year, into=c("century","year"), sep=2)
 
 table5 |> unite(fullyear, century, year, sep="")
+
+coronavirus <- 
+read_csv('https://raw.githubusercontent.com/RamiKrispin/coronavirus/master/csv/coronavirus.csv')
+
+view(coronavirus)
+
+coronavirus |> 
+filter(country=="US",cases >=0) |> 
+ggplot(aes(x=date, y=cases,color=type)) + geom_line()
+
+covid_wide <- 
+coronavirus |> 
+pivot_wider(names_from = type, values_from = cases) 
+
+covid_wide |> ggplot(aes(x=date,y=confirmed,death,recovery)) |> geom_line()
+#The long format is actually easier to do this for because you can map them 
+#separately when they are all in the type variable.
+
+coronavirus_ttd <- coronavirus |> 
+  group_by(country, type) |>
+  summarize(total_cases = sum(cases)) |> #total cases per country
+  pivot_wider(names_from = type, values_from = total_cases)
+
+# Now we can plot this easily
+ggplot(coronavirus_ttd) +
+  geom_label(mapping = aes(x = confirmed, y = death, label = country))
+
