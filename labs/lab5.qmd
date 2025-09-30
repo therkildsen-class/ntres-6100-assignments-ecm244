@@ -119,10 +119,8 @@ ungroup()|>
 summarize(average_fare=mean(fare_per_ticket))
 ```
 
-
 ```{r}
 titanic |> 
 group_by(Ticket,Pclass) |> mutate(n_tickets=n(), fare_per_ticket=Fare/n_tickets) |> 
 ggplot() + geom_histogram(mapping = aes(x=fare_per_ticket)) + facet_wrap(~Pclass,nrow = 3)+ labs(title = "Fare Per Ticket by Class")
 ```
-
