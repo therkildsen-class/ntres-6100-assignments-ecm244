@@ -38,6 +38,8 @@ select(region,State,Land.Value,Date) |>
 filter(State=="DC") |> 
 head(6) |> 
 kable()
+
+housing2 |> count(State=="DC")
 ```
 
 Answer=There are 153 values
