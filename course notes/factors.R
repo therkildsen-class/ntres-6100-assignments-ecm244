@@ -64,7 +64,8 @@ filter(pop < 250000)
 small_countries|>
 count(country)|> 
 droplevels() |> 
-nlevels(country)
+  pull(country) |> 
+nlevels()
 
 levels(gapminder$continent) 
 
