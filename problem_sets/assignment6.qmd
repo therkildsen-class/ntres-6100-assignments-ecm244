@@ -11,8 +11,8 @@ library(tidyr)
 ```
 
 ```{r}
-as.tibble (a=1,2,
-          b=2.1,3.2,
+tibble (a=1:2,
+          b=2.1:3.2,
           c="apple","orange")
 ```
 
@@ -26,9 +26,9 @@ tribble(
 ```
 
 ```{r}
-fruit <- read_tsv("https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/dataset3.txt")
+fruit <- read_tsv("https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/dataset3.txt") 
 
-fruit
+fruit 
 ```
 
 ```{r}
