@@ -77,3 +77,5 @@ select(faa,name,lat,lon)
 flights2 |> 
 left_join(airports2, join_by(origin == faa)) |> 
 left_join(airports2, join_by(destination == faa), suffix = ("_origin","_dest"))
+
+
