@@ -1,0 +1,39 @@
+---
+title: "assignment6"
+format: gfm
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(tidyr)
+```
+
+```{r}
+as.tibble (a=1,2,
+          b=2.1,3.2,
+          c="apple","orange")
+```
+
+```{r}
+tribble(
+ ~a, ~b, ~c,
+ 
+ #--|--|----
+ 1, 2.1, "apple",
+ 2, 3.2, "orange")
+```
+
+```{r}
+fruit <- read_tsv("https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/dataset3.txt")
+
+fruit
+```
+
+```{r}
+fruit2 <- read_tsv("https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/dataset5.txt")
+
+fruit2 |> parse_date(Expiration Date, "%m/%d/%y") |> parse_time(Time, "%p")
+```
+
