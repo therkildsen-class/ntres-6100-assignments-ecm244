@@ -74,8 +74,17 @@ weather |> kable()
 Before cleaning:
 
 ```{r}
+```
 
+
+```{r}
+```
+
+
+```{r}
 weather2 <- read_csv("https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/2015y_Weather_Station.csv")
 
 kable(weather2)
 ```
+
+After cleaning
