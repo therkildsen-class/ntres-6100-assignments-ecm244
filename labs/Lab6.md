@@ -153,22 +153,25 @@ kable()
 | sei            |     54.75000 |
 | southern_right |     47.00000 |
 
-Question 6. Try to summarize as much information contained in
-`whales_parsed` as possible in one plot.
+**Question 6. Try to summarize as much information contained in
+`whales_parsed` as possible in one plot.**
 
 ``` r
 whales_parsed |> 
-group_by(species) |>
-mutate(strikes_per_species=n()) |> 
-head() |> 
-kable()
+select(-observer) |> 
+group_by(species) |> 
+ggplot()+
+geom_histogram(mapping=aes(x=size,color=species)) + 
+labs (title = "Size and Number of obs. by Species")
 ```
 
-| observer | species        | date       | outcome | size | ocean    | strikes_per_species |
-|---------:|:---------------|:-----------|:--------|-----:|:---------|--------------------:|
-|        1 | blue           | 2015-01-20 | death   |   NA | Indian   |                   5 |
-|        1 | sei            | 2011-08-09 | injury  |   NA | indian   |                   5 |
-|        2 | humpback       | 2015-08-12 | death   |   50 | atlantic |                   7 |
-|        2 | fin            | 2013-08-02 | death   |   76 | arctic   |                   4 |
-|        2 | bowhead        | 2013-06-24 | injury  |   30 | artic    |                   5 |
-|        3 | southern_right | 2013-07-14 | injury  |   47 | pacific  |                   7 |
+    `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+    Warning: Removed 8 rows containing non-finite outside the scale range
+    (`stat_bin()`).
+
+![](Lab6_files/figure-commonmark/unnamed-chunk-8-1.png)
+
+I was unable to use ocean as a facet wrap like I wanted to because the
+way the ocean names are spelled is inconsistent. I also couldn’t use
+years as a facet because the data is recorded in individual days.

@@ -29,7 +29,7 @@ tribble(
  2, 3.2, "orange")
 ```
 
-1.3 Import https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/dataset3.txt into R. Watch out for the first few lines, missing values, separators, quotation marks, and deliminaters.
+**1.3 Import https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/dataset3.txt into R. Watch out for the first few lines, missing values, separators, quotation marks, and deliminaters.**
 
 ```{r}
 fruit <- read_delim("https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/dataset3.txt",skip=2, delim=";", quote ="/", na=c("?","Not Available"))
@@ -37,7 +37,7 @@ fruit <- read_delim("https://raw.githubusercontent.com/nt246/NTRES-6100-data-sci
 fruit
 ```
 
-1.5 Import https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/dataset5.txt into R. Parse the columns properly. As a reminder, you can read about parsing date and time data here. Write this imported and parsed data frame into a new csv file named dataset5_new.csv in your problem_sets folder.
+**1.5 Import https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/dataset5.txt into R. Parse the columns properly. As a reminder, you can read about parsing date and time data here. Write this imported and parsed data frame into a new csv file named dataset5_new.csv in your problem_sets folder.**
 
 ```{r}
 fruit2 <- read_delim("https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/dataset5.txt", delim=" ")
@@ -49,9 +49,9 @@ write_csv(fruit_clean,file="fruit.csv")
 
 ***Exercise 2. Weather station***
 
-2.1 Variable descriptions The text file https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/2015y_Weather_Station_notes.txt contains descriptions of different variables collected by the station.
+\*\*2.1 Variable descriptions The text file https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/2015y_Weather_Station_notes.txt contains descriptions of different variables collected by the station.
 
-Import it into R and print it in a table as shown below with kable().
+Import it into R and print it in a table as shown below with kable().\*\*
 
 ```{r}
 weather <- read_delim("https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/2015y_Weather_Station_notes.txt", delim="-") 
@@ -73,7 +73,7 @@ weather |> kable()
 
 -   Show the first 6 rows and 10 columns of this cleaned dataset, as shown below, *without* using `kable()`.
 
-*Hints: you don\'t have to perform these tasks in the given order; also, warning messages are not necessarily signs of trouble.*
+*Hints: you don't have to perform these tasks in the given order; also, warning messages are not necessarily signs of trouble.*
 
 Before cleaning:
 
@@ -92,9 +92,23 @@ names_to="hour")|>
 pivot_wider(values_from = value, names_from = item) |> 
 mutate(date=parse_date(date,format = "%Y/%m/%d")) |> 
 mutate(hour=parse_time(hour,format="%h")) |> 
-mutate(rainfall=parse_double(rainfall))
-
-view(weather2_clean)
+mutate(AMB_TEMP=parse_number(AMB_TEMP)) |> 
+mutate(RAINFALL=parse_number(RAINFALL)) |> 
+mutate(RAINFALL=ifelse(RAINFALL=="NR","0",RAINFALL)) |> 
+replace_na(list(x=0)) |> 
+mutate(CO=parse_number(CO)) |> 
+mutate(NO=parse_number(NO)) |> 
+mutate(NO2=parse_number(NO2)) |> 
+mutate(NOx=parse_number(NOx)) |> 
+mutate(O3=parse_number(O3)) |> 
+mutate(PM10=parse_number(PM10)) |> 
+mutate(PM2.5=parse_number(PM2.5)) |> 
+mutate(RH=parse_number(RH)) |> 
+mutate(SO2=parse_number(SO2)) |> 
+mutate(WD_HR=parse_number(WD_HR)) |> 
+mutate(WIND_DIREC=parse_number(WIND_DIREC)) |> 
+mutate(WIND_SPEED=parse_number(WIND_SPEED)) |> 
+mutate(WS_HR=parse_number(WS_HR))
 ```
 
 After Cleaning
@@ -103,10 +117,38 @@ After Cleaning
 weather2_clean |> head(10)
 ```
 
-2.3 Using this cleaned dataset, plot the daily variation in ambient temperature on September 25, 2015, as shown below.
+**2.3 Using this cleaned dataset, plot the daily variation in ambient temperature on September 25, 2015, as shown below.**
 
 ```{r}
 weather2_clean |> 
   filter(date=="2015/09/25") |> 
-  ggplot() + geom_point(mapping = aes(x=hour,y=AMB_TEMP)) 
+  ggplot() + geom_point(mapping = aes(x=hour,y=amb_temp)) 
+```
+
+**2.4 Plot the daily average ambient temperature throughout the year with a continuous line, as shown below.**
+
 ```{r}
+weather2_clean |> 
+group_by(date) |> 
+summarize(daily_avg_temp=mean(AMB_TEMP)) |> 
+ggplot() + geom_line(mapping=aes(x=date, y=daily_avg_temp))
+```
+
+**2.5 Plot the total rainfall per month in a bar chart, as shown below. Hint: separating date into three columns might be helpful.**
+
+```{r}
+weather_split <- weather2_clean |> 
+separate(date,into = c("year","month","day"),sep = "-") 
+
+
+weather_split |> group_by(month) |> 
+summarize(monthly_rainfall=sum(RAINFALL)) |> 
+ggplot() + geom_bar(mapping=aes(y=monthly_rainfall))
+```
+
+**2.6 Plot the per hour variation in PM2.5 in the first week of September with a continuous line, as shown below.
+Hint: uniting the date and hour and parsing the new variable might be helpful.**
+
+```{r}
+weather2 |> unite(date,hour) 
+```

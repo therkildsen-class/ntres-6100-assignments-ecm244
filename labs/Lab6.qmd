@@ -49,13 +49,7 @@ whales_split |>
 
 **Question 4. Starting from `whales_split`, create another data frame in which all columns are parsed as instructed below. Name this data frame `whales_parsed`.**
 
-The columns should parsed to the following types
-* observer: double
-* species: character
-* date: date
-* outcome: character
-* size: integer
-* ocean: character
+The columns should parsed to the following types \* observer: double \* species: character \* date: date \* outcome: character \* size: integer \* ocean: character
 
 ```{r}
 whales_parsed <- whales_split |> 
@@ -63,8 +57,7 @@ mutate(date=parse_date(date, "%m/%d/%y")) |>
 mutate(size=parse_integer(size)) 
 
 whales_parsed |> 
-head()|> 
-kable()
+head()
 ```
 
 **Question 5. Using whales_parsed, print a summary table with: 1) number ship strikes by species, 2) average whale size by species, omitting NA values in the calculation.**
@@ -95,6 +88,4 @@ geom_histogram(mapping=aes(x=size,color=species)) +
 labs (title = "Size and Number of obs. by Species")
 ```
 
-I was unable to use ocean as a facet wrap like I wanted to because the way
-the ocean names are spelled is inconsistent. I also couldn't use years as a 
-facet because the data is recorded in individual days.
+I was unable to use ocean as a facet wrap like I wanted to because the way the ocean names are spelled is inconsistent. I also couldn't use years as a facet because the data is recorded in individual days.
