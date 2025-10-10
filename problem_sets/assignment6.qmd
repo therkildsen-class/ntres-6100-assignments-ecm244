@@ -151,8 +151,8 @@ Hint: uniting the date and hour and parsing the new variable might be helpful.**
 
 ```{r}
 unite(weather_split, year, month, day, sep=" ") |> 
-  mutate(time = parse_datetime(time)) |> 
-  filter(time<=parse_datetime("2015-09-08"), time>=parse_datetime("2015-09-01"), !is.na(PM2.5))  |> 
-  ggplot(aes(x=time, y=PM2.5)) + 
+  filter(year==c("09 01","09 02","09 03","09 04","09 05","09 06","09 07","09 08")) |>
+  group_by(hour)|> 
+  ggplot(aes(x=hour, y=PM2.5)) + 
   geom_line()
 ```
