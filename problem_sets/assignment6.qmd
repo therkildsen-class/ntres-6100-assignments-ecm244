@@ -89,13 +89,11 @@ Cleaning Process
 weather2_clean <-weather2 |> pivot_longer(c("00","01","02","03","04","05","06","07","08","09",
 "10","11","12","13","14","15","16","17","18","19","20","21","22","23"),
 names_to="hour")|> 
-pivot_wider(values_from = value, names_from = item) |> 
+pivot_wider(values_from = value, names_from = item) |> mutate(RAINFALL=ifelse(RAINFALL=="NR","0",RAINFALL)) |> 
 mutate(date=parse_date(date,format = "%Y/%m/%d")) |> 
 mutate(hour=parse_time(hour,format="%h")) |> 
 mutate(AMB_TEMP=parse_number(AMB_TEMP)) |> 
 mutate(RAINFALL=parse_number(RAINFALL)) |> 
-mutate(RAINFALL=ifelse(RAINFALL=="NR","0",RAINFALL)) |> 
-replace_na(list(x=0)) |> 
 mutate(CO=parse_number(CO)) |> 
 mutate(NO=parse_number(NO)) |> 
 mutate(NO2=parse_number(NO2)) |> 
@@ -122,7 +120,7 @@ weather2_clean |> head(10)
 ```{r}
 weather2_clean |> 
   filter(date=="2015/09/25") |> 
-  ggplot() + geom_point(mapping = aes(x=hour,y=amb_temp)) 
+  ggplot() + geom_line(mapping = aes(x=hour,y=AMB_TEMP)) 
 ```
 
 **2.4 Plot the daily average ambient temperature throughout the year with a continuous line, as shown below.**
@@ -141,14 +139,20 @@ weather_split <- weather2_clean |>
 separate(date,into = c("year","month","day"),sep = "-") 
 
 
-weather_split |> group_by(month) |> 
+weather_split |> 
+group_by(month) |> 
 summarize(monthly_rainfall=sum(RAINFALL)) |> 
-ggplot() + geom_bar(mapping=aes(y=monthly_rainfall))
+replace_na(list(x="0")) |> 
+ggplot() + geom_histogram(mapping=aes(y=monthly_rainfall))
 ```
 
 **2.6 Plot the per hour variation in PM2.5 in the first week of September with a continuous line, as shown below.
 Hint: uniting the date and hour and parsing the new variable might be helpful.**
 
 ```{r}
-weather2 |> unite(date,hour) 
+unite(weather_split, year, month, day, sep=" ") |> 
+  mutate(time = parse_datetime(time)) |> 
+  filter(time<=parse_datetime("2015-09-08"), time>=parse_datetime("2015-09-01"), !is.na(PM2.5))  |> 
+  ggplot(aes(x=time, y=PM2.5)) + 
+  geom_line()
 ```
