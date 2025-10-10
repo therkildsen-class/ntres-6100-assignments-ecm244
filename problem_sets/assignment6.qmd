@@ -143,7 +143,7 @@ weather_split |>
 group_by(month) |> 
 summarize(monthly_rainfall=sum(RAINFALL)) |> 
 replace_na(list(x="0")) |> 
-ggplot() + geom_histogram(mapping=aes(y=monthly_rainfall))
+ggplot() + geom_col(mapping=aes(x=month,y=monthly_rainfall))
 ```
 
 **2.6 Plot the per hour variation in PM2.5 in the first week of September with a continuous line, as shown below.
