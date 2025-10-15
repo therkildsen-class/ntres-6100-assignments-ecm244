@@ -1,6 +1,6 @@
 ---
 title: "assignment7"
-format: html
+format: gfm
 editor: visual
 ---
 
@@ -37,7 +37,7 @@ q_1a |> head(6) |> kable()
 ```{r}
 q_1b <- q_1a |> 
 select(-abb) |> 
-mutate(winner=ifelse(clinton > 50.0, "clinton", "trump"))
+mutate(winner=ifelse(trump > 50.0, "trump", "clinton"))
 
 q_1b |> head(6) |> kable()
 ```
@@ -69,7 +69,8 @@ select(metric,winner,value) |>
 group_by(metric,winner) |> 
 summarize(value=sum(value))
 
-q_2b |> kable()
+kable(q_2b)
 ```
+
 
 
