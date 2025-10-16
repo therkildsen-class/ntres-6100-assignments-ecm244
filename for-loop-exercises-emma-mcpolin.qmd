@@ -97,6 +97,7 @@ for (cntry in country_list) {
   ggsave(filename = str_c("gap_figs/", cntry, "_gdp_per_cap.png", sep = ""), plot = my_plot)
 } 
 
+#str_c binds together different text strings 
 
 ```
 
