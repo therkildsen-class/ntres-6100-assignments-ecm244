@@ -37,7 +37,7 @@ q_1a |> head(6) |> kable()
 ```{r}
 q_1b <- q_1a |> 
 select(-abb) |> 
-mutate(winner=ifelse(trump > 50.0, "trump", "clinton"))
+mutate(winner=ifelse(clinton > trump, "clinton", "trump"))
 
 q_1b |> head(6) |> kable()
 ```
@@ -71,6 +71,14 @@ summarize(value=sum(value))
 
 kable(q_2b)
 ```
+
+**2c. Use the q_2b dataset to contruct a bar plot to show the final electoral vote share under the scenarios of 1) each state has the number of electoral votes that it currently has, and 2) each state has the number of electoral votes that is exactly proportional to its population size. Here, assume that for each state, the winner will take all its electoral votes.**
+
+```{r}
+q_2b |> 
+ggplot(mapping = aes(x=metric,y=value,color=winner))+geom_col(position = "fill")
+```
+
 
 
 
