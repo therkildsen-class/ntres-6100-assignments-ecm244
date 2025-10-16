@@ -119,10 +119,9 @@ ggplot(mapping = aes(x=metric,y=value,color=winner))+geom_col(position = "fill")
 
 **4a. The polling data is stored in the data frame `polls_us_election_2016.` For the sake of simplicity, we will only look at the data from a single poll for each state. Subset the polling data to include only the results from the pollster Ipsos. Exclude national polls, and for each state, select the polling result with the enddate closest to the election day (i.e. those with the lastest end date). Keep only the columns state, adjpoll_clinton, and adjpoll_trump. Save this new dataset as q_4a, and show its first 6 rows.**
 
+\*Note: You should have 47 rows in q_4a because only 47 states were polled at least once by Ipsos. You don't need to worry about the 3 missing states and DC.
 
-*Note: You should have 47 rows in q_4a because only 47 states were polled at least once by Ipsos. You don’t need to worry about the 3 missing states and DC.
-
-Hint: `group_by()` and `slice_max()` can be useful for this question. Check out the help file for `slice_max()` for more info*
+Hint: `group_by()` and `slice_max()` can be useful for this question. Check out the help file for `slice_max()` for more info\*
 
 ```{r}
 q_4a <- polls_us_election_2016 |>  
@@ -134,14 +133,9 @@ select(state,adjpoll_clinton,adjpoll_trump)
 head(q_4a) |> kable()
 ```
 
-**4b. Combine the q_4a dataset with the q_1b dataset with a join function. The resulting dataset should only have 47 rows. Create the following new variables in this joined dataset.
+\*\*4b. Combine the q_4a dataset with the q_1b dataset with a join function. The resulting dataset should only have 47 rows. Create the following new variables in this joined dataset.
 
-`polling_margin:` difference between adjpoll_clinton and adjpoll_trump
-`actual_margin:` difference between clinton and trump
-`polling_error:` difference between polling_margin and actual_margin
-`predicted_winner:` predicted winner based on adjpoll_clinton and adjpoll_trump
-`result = ifelse(winner == predicted_winner, "correct prediction", str_c("unexpected ", winner, " win"))`
-Keep only the columns state, polling_error, result, electoral_votes. Name the new dataset q_4b and show its first 6 rows.**
+`polling_margin:` difference between adjpoll_clinton and adjpoll_trump `actual_margin:` difference between clinton and trump `polling_error:` difference between polling_margin and actual_margin `predicted_winner:` predicted winner based on adjpoll_clinton and adjpoll_trump `result = ifelse(winner == predicted_winner, "correct prediction", str_c("unexpected ", winner, " win"))` Keep only the columns state, polling_error, result, electoral_votes. Name the new dataset q_4b and show its first 6 rows.\*\*
 
 ```{r}
 q_4b <- 
@@ -157,10 +151,8 @@ q_4b |> select(state,polling_error,result,electoral_votes) |> head() |> kable()
 
 **4c. Generate the following plot with the q_4b dataset. Use chunk options to adjust the dimensions of the plot to make it longer than the default dimension. Based on this plot, where did the polls get wrong in the 2016 election?**
 
-```{r}
+```{r fig.height=7, fig.width=7}
 q_4b |> 
 ggplot() + geom_point(mapping=aes(y=state,x=polling_error,
-                                  color=result,size=electoral_votes))
+          color=result,size=electoral_votes,fig.height=50))
 ```
-
-
