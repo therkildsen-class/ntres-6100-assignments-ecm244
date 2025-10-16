@@ -49,7 +49,7 @@ q_1b |> ggplot(mapping=aes(x=population, y=electoral_votes)) +
 geom_line() + geom_point(mapping=aes(color=winner))
 ```
 
-### **Question 2. Would the election result be any different if the number of electoral votes is exactly proportional to a state\'s population size?**
+### **Question 2. Would the election result be any different if the number of electoral votes is exactly proportional to a state's population size?**
 
 **2a.** First, convert the `q_1b` dataset to longer format such that the `population` and `electoral_votes` columns are turned into rows as shown below. Name this new dataset `q_2a`, and show its first 6 rows.
 
@@ -79,6 +79,58 @@ q_2b |>
 ggplot(mapping = aes(x=metric,y=value,color=winner))+geom_col(position = "fill")
 ```
 
+\*\*3a. First, from this dataset on GitHub, calculate the number of popular votes each candidate received as shown below. Name this new dataset q_3a, and print it.
+
+Note: Vote counts are listed for several other candidates. Please combine the votes for all candidates other than Clinton and Trump into a single others category (as shown in the table below)
+
+Hint: pivot_longer() may be useful in here.\*\*
+
+```{r}
+votes <-read.csv ("https://raw.githubusercontent.com/kshaffer/election2016/master/2016ElectionResultsByState.csv")
+
+q_3a <- 
+votes |> 
+summarize(clinton=sum(clintonVotes+clintonElectors),
+trump=sum(trumpVotes+trumpElectors),
+others=sum(steinVotes+mcmullinVotes+othersVotes)) |> 
+mutate(metric = "popular_votes") |>
+relocate(metric) |> 
+pivot_longer(c(clinton,trump,others),names_to ="winner",values_to="value") 
+
+head(q_3a) |> kable() 
+
+```
+
+**3b. Combine the `q_2b` dataset with the `q_3a` dataset. Call this new dataset `q_3b`, and print it as shown below.**
+
+```{r}
+q_3b <- 
+bind_rows(q_2b,q_3a) 
+
+kable(q_3b)
+```
+
+**3c. Lastly, use the `q_3b` dataset to contruct a bar plot to show the final vote share under the scenarios of 1) each state has the number of electoral votes that it currently has, 2) each state has the number of electoral votes that is exactly proportional to its population size, and 3) the election result is determined by the popular vote.**
+
+```{r}
+q_3b |> 
+ggplot(mapping = aes(x=metric,y=value,color=winner))+geom_col(position = "fill")
+```
+
+**4a. The polling data is stored in the data frame `polls_us_election_2016.` For the sake of simplicity, we will only look at the data from a single poll for each state. Subset the polling data to include only the results from the pollster Ipsos. Exclude national polls, and for each state, select the polling result with the enddate closest to the election day (i.e. those with the lastest end date). Keep only the columns state, adjpoll_clinton, and adjpoll_trump. Save this new dataset as q_4a, and show its first 6 rows.**
 
 
+*Note: You should have 47 rows in q_4a because only 47 states were polled at least once by Ipsos. You don’t need to worry about the 3 missing states and DC.
+
+Hint: `group_by()` and `slice_max()` can be useful for this question. Check out the help file for `slice_max()` for more info*
+
+```{r}
+q_4a <- polls_us_election_2016 |>  
+filter(pollster == "Ipsos",state != "U.S.") |> 
+group_by(state) |> 
+slice_max(startdate) |> 
+select(state,adjpoll_clinton,adjpoll_trump)
+
+head(q_4a) |> kable()
+```
 

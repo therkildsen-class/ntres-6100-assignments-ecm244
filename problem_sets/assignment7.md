@@ -82,7 +82,7 @@ candidate won in each state, and remove the columns `abb`, `region`, and
 ``` r
 q_1b <- q_1a |> 
 select(-abb) |> 
-mutate(winner=ifelse(trump > 50.0, "trump", "clinton"))
+mutate(winner=ifelse(clinton > trump, "clinton", "trump"))
 
 q_1b |> head(6) |> kable()
 ```
@@ -91,7 +91,7 @@ q_1b |> head(6) |> kable()
 |:-----------|:-------|-----------:|------:|----------------:|--------:|------:|-------:|:--------|
 | Alabama    | South  |    4779736 |   135 |               9 |    34.4 |  62.1 |    3.6 | trump   |
 | Alaska     | West   |     710231 |    19 |               3 |    36.6 |  51.3 |   12.2 | trump   |
-| Arizona    | West   |    6392017 |   232 |              11 |    45.1 |  48.7 |    6.2 | clinton |
+| Arizona    | West   |    6392017 |   232 |              11 |    45.1 |  48.7 |    6.2 | trump   |
 | Arkansas   | South  |    2915918 |    93 |               6 |    33.7 |  60.6 |    5.8 | trump   |
 | California | West   |   37253956 |  1257 |              55 |    61.7 |  31.6 |    6.7 | clinton |
 | Colorado   | West   |    5029196 |    65 |               9 |    48.2 |  43.3 |    8.6 | clinton |
@@ -121,14 +121,14 @@ pivot_longer(c(electoral_votes,population),names_to="metric",values_to="value")
 q_2a |> head(6) |> kable()
 ```
 
-| state   | region | total | clinton | trump | others | winner  | metric          |   value |
-|:--------|:-------|------:|--------:|------:|-------:|:--------|:----------------|--------:|
-| Alabama | South  |   135 |    34.4 |  62.1 |    3.6 | trump   | electoral_votes |       9 |
-| Alabama | South  |   135 |    34.4 |  62.1 |    3.6 | trump   | population      | 4779736 |
-| Alaska  | West   |    19 |    36.6 |  51.3 |   12.2 | trump   | electoral_votes |       3 |
-| Alaska  | West   |    19 |    36.6 |  51.3 |   12.2 | trump   | population      |  710231 |
-| Arizona | West   |   232 |    45.1 |  48.7 |    6.2 | clinton | electoral_votes |      11 |
-| Arizona | West   |   232 |    45.1 |  48.7 |    6.2 | clinton | population      | 6392017 |
+| state   | region | total | clinton | trump | others | winner | metric          |   value |
+|:--------|:-------|------:|--------:|------:|-------:|:-------|:----------------|--------:|
+| Alabama | South  |   135 |    34.4 |  62.1 |    3.6 | trump  | electoral_votes |       9 |
+| Alabama | South  |   135 |    34.4 |  62.1 |    3.6 | trump  | population      | 4779736 |
+| Alaska  | West   |    19 |    36.6 |  51.3 |   12.2 | trump  | electoral_votes |       3 |
+| Alaska  | West   |    19 |    36.6 |  51.3 |   12.2 | trump  | population      |  710231 |
+| Arizona | West   |   232 |    45.1 |  48.7 |    6.2 | trump  | electoral_votes |      11 |
+| Arizona | West   |   232 |    45.1 |  48.7 |    6.2 | trump  | population      | 6392017 |
 
 **2b.** Then, sum up the number of electoral votes and population size
 across all states for each candidate. Name this new dataset `q_2b`, and
@@ -151,7 +151,35 @@ kable(q_2b)
 
 | metric          | winner  |     value |
 |:----------------|:--------|----------:|
-| electoral_votes | clinton |       340 |
-| electoral_votes | trump   |       198 |
-| population      | clinton | 201634491 |
-| population      | trump   | 108229737 |
+| electoral_votes | clinton |       233 |
+| electoral_votes | trump   |       305 |
+| population      | clinton | 134982448 |
+| population      | trump   | 174881780 |
+
+**2c. Use the q_2b dataset to contruct a bar plot to show the final
+electoral vote share under the scenarios of 1) each state has the number
+of electoral votes that it currently has, and 2) each state has the
+number of electoral votes that is exactly proportional to its population
+size. Here, assume that for each state, the winner will take all its
+electoral votes.**
+
+``` r
+q_2b |> 
+ggplot(mapping = aes(x=metric,y=value,color=winner))+geom_col(position = "fill")
+```
+
+![](assignment7_files/figure-commonmark/unnamed-chunk-7-1.png)
+
+``` r
+votes <-read.csv ("https://raw.githubusercontent.com/kshaffer/election2016/master/2016ElectionResultsByState.csv")
+
+q_3a <- 
+votes |> 
+summarize(clinton=sum(clintonVotes+clintonElectors),
+trump=sum(trumpVotes+trumpElectors),
+others=sum(steinVotes+mcmullinVotes+othersVotes)) |> 
+mutate(metric = "popular_votes") |>
+relocate(metric) |> 
+head() |> 
+kable()
+```
