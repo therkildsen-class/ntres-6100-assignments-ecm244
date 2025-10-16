@@ -7,7 +7,7 @@ gapminder <- gapminder |>
 dir.create("gap_figs") 
 
 ## create a list of countries
-country_list <- c("Spain","Sweden","Mexico")
+country_list <- c("Spain","Sweden","Mexico","Japan")
 
 for (cntry in country_list) {
   
@@ -24,3 +24,5 @@ for (cntry in country_list) {
   ## add the gap_figs/ folder
   ggsave(filename = str_c("gap_figs/", cntry, "_gdp_per_cap.png", sep = ""), plot = my_plot)
 } 
+
+figures/$.png
