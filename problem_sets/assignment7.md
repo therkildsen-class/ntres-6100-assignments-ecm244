@@ -108,7 +108,7 @@ geom_line() + geom_point(mapping=aes(color=winner))
 
 ![](assignment7_files/figure-commonmark/unnamed-chunk-4-1.png)
 
-### **Question 2. Would the election result be any different if the number of electoral votes is exactly proportional to a state's population size?**
+### **Question 2. Would the election result be any different if the number of electoral votes is exactly proportional to a state’s population size?**
 
 **2a.** First, convert the `q_1b` dataset to longer format such that the
 `population` and `electoral_votes` columns are turned into rows as shown
@@ -170,6 +170,16 @@ ggplot(mapping = aes(x=metric,y=value,color=winner))+geom_col(position = "fill")
 
 ![](assignment7_files/figure-commonmark/unnamed-chunk-7-1.png)
 
+\*\*3a. First, from this dataset on GitHub, calculate the number of
+popular votes each candidate received as shown below. Name this new
+dataset q_3a, and print it.
+
+Note: Vote counts are listed for several other candidates. Please
+combine the votes for all candidates other than Clinton and Trump into a
+single others category (as shown in the table below)
+
+Hint: pivot_longer() may be useful in here.\*\*
+
 ``` r
 votes <-read.csv ("https://raw.githubusercontent.com/kshaffer/election2016/master/2016ElectionResultsByState.csv")
 
@@ -180,6 +190,131 @@ trump=sum(trumpVotes+trumpElectors),
 others=sum(steinVotes+mcmullinVotes+othersVotes)) |> 
 mutate(metric = "popular_votes") |>
 relocate(metric) |> 
-head() |> 
-kable()
+pivot_longer(c(clinton,trump,others),names_to ="winner",values_to="value") 
+
+head(q_3a) |> kable() 
 ```
+
+| metric        | winner  |    value |
+|:--------------|:--------|---------:|
+| popular_votes | clinton | 65125872 |
+| popular_votes | trump   | 62616981 |
+| popular_votes | others  |  2586650 |
+
+**3b. Combine the `q_2b` dataset with the `q_3a` dataset. Call this new
+dataset `q_3b`, and print it as shown below.**
+
+``` r
+q_3b <- 
+bind_rows(q_2b,q_3a) 
+
+kable(q_3b)
+```
+
+| metric          | winner  |     value |
+|:----------------|:--------|----------:|
+| electoral_votes | clinton |       233 |
+| electoral_votes | trump   |       305 |
+| population      | clinton | 134982448 |
+| population      | trump   | 174881780 |
+| popular_votes   | clinton |  65125872 |
+| popular_votes   | trump   |  62616981 |
+| popular_votes   | others  |   2586650 |
+
+**3c. Lastly, use the `q_3b` dataset to contruct a bar plot to show the
+final vote share under the scenarios of 1) each state has the number of
+electoral votes that it currently has, 2) each state has the number of
+electoral votes that is exactly proportional to its population size, and
+3) the election result is determined by the popular vote.**
+
+``` r
+q_3b |> 
+ggplot(mapping = aes(x=metric,y=value,color=winner))+geom_col(position = "fill")
+```
+
+![](assignment7_files/figure-commonmark/unnamed-chunk-10-1.png)
+
+**4a. The polling data is stored in the data frame
+`polls_us_election_2016.` For the sake of simplicity, we will only look
+at the data from a single poll for each state. Subset the polling data
+to include only the results from the pollster Ipsos. Exclude national
+polls, and for each state, select the polling result with the enddate
+closest to the election day (i.e. those with the lastest end date). Keep
+only the columns state, adjpoll_clinton, and adjpoll_trump. Save this
+new dataset as q_4a, and show its first 6 rows.**
+
+\*Note: You should have 47 rows in q_4a because only 47 states were
+polled at least once by Ipsos. You don’t need to worry about the 3
+missing states and DC.
+
+Hint: `group_by()` and `slice_max()` can be useful for this question.
+Check out the help file for `slice_max()` for more info\*
+
+``` r
+q_4a <- polls_us_election_2016 |>  
+filter(pollster == "Ipsos",state != "U.S.") |> 
+group_by(state) |> 
+slice_max(startdate) |> 
+select(state,adjpoll_clinton,adjpoll_trump)
+
+head(q_4a) |> kable()
+```
+
+| state       | adjpoll_clinton | adjpoll_trump |
+|:------------|----------------:|--------------:|
+| Alabama     |        37.54023 |      53.69718 |
+| Arizona     |        41.35774 |      46.17779 |
+| Arkansas    |        37.15339 |      53.28384 |
+| California  |        58.33806 |      31.00473 |
+| Colorado    |        46.00764 |      40.73571 |
+| Connecticut |        48.81810 |      38.87069 |
+
+\*\*4b. Combine the q_4a dataset with the q_1b dataset with a join
+function. The resulting dataset should only have 47 rows. Create the
+following new variables in this joined dataset.
+
+`polling_margin:` difference between adjpoll_clinton and adjpoll_trump
+`actual_margin:` difference between clinton and trump `polling_error:`
+difference between polling_margin and actual_margin `predicted_winner:`
+predicted winner based on adjpoll_clinton and adjpoll_trump
+`result = ifelse(winner == predicted_winner, "correct prediction", str_c("unexpected ", winner, " win"))`
+Keep only the columns state, polling_error, result, electoral_votes.
+Name the new dataset q_4b and show its first 6 rows.\*\*
+
+``` r
+q_4b <- 
+left_join(q_4a,q_1b) |> 
+mutate(poll_margin=adjpoll_clinton-adjpoll_trump) |> 
+mutate(actual_margin=clinton-trump) |> 
+mutate(polling_error=poll_margin-actual_margin) |> 
+mutate(predicted_winner=ifelse(adjpoll_clinton>adjpoll_trump,"clinton","trump")) |> 
+mutate(result = ifelse(winner == predicted_winner, "correct prediction", str_c("unexpected ", winner, " win"))) 
+```
+
+    Joining with `by = join_by(state)`
+
+``` r
+q_4b |> select(state,polling_error,result,electoral_votes) |> head() |> kable()
+```
+
+| state       | polling_error | result             | electoral_votes |
+|:------------|--------------:|:-------------------|----------------:|
+| Alabama     |      11.54305 | correct prediction |               9 |
+| Arizona     |      -1.22005 | correct prediction |              11 |
+| Arkansas    |      10.76955 | correct prediction |               6 |
+| California  |      -2.76667 | correct prediction |              55 |
+| Colorado    |       0.37193 | correct prediction |               9 |
+| Connecticut |      -3.75259 | correct prediction |               7 |
+
+**4c. Generate the following plot with the q_4b dataset. Use chunk
+options to adjust the dimensions of the plot to make it longer than the
+default dimension. Based on this plot, where did the polls get wrong in
+the 2016 election?**
+
+``` r
+q_4b |> 
+ggplot() + geom_point(mapping=aes(y=state,x=polling_error,
+                                  color=result,size=electoral_votes))
+```
+
+![](assignment7_files/figure-commonmark/unnamed-chunk-13-1.png)
