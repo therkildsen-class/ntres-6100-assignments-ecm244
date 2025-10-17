@@ -1,32 +1,5 @@
 # assignment7
 
-``` r
-library(tidyverse)
-```
-
-    Warning: package 'ggplot2' was built under R version 4.3.3
-
-    ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-    ✔ dplyr     1.1.2     ✔ readr     2.1.4
-    ✔ forcats   1.0.0     ✔ stringr   1.5.0
-    ✔ ggplot2   3.5.2     ✔ tibble    3.2.1
-    ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
-    ✔ purrr     1.0.1     
-    ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-    ✖ dplyr::filter() masks stats::filter()
-    ✖ dplyr::lag()    masks stats::lag()
-    ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
-
-``` r
-library(knitr)
-```
-
-    Warning: package 'knitr' was built under R version 4.3.3
-
-``` r
-library(dslabs)
-```
-
 ## **Excercise: 2016 election result and polling**
 
 For this exercise, we will explore the result of the 2016 US
@@ -289,11 +262,7 @@ mutate(actual_margin=clinton-trump) |>
 mutate(polling_error=poll_margin-actual_margin) |> 
 mutate(predicted_winner=ifelse(adjpoll_clinton>adjpoll_trump,"clinton","trump")) |> 
 mutate(result = ifelse(winner == predicted_winner, "correct prediction", str_c("unexpected ", winner, " win"))) 
-```
 
-    Joining with `by = join_by(state)`
-
-``` r
 q_4b |> select(state,polling_error,result,electoral_votes) |> head() |> kable()
 ```
 
@@ -314,7 +283,10 @@ the 2016 election?**
 ``` r
 q_4b |> 
 ggplot() + geom_point(mapping=aes(y=state,x=polling_error,
-                                  color=result,size=electoral_votes))
+          color=result,size=electoral_votes,fig.height=50))
 ```
 
 ![](assignment7_files/figure-commonmark/unnamed-chunk-13-1.png)
+
+Answer: The unexpected results were in Florida, Wisconsin, and Michigan
+which are generally considered swing states.

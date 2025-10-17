@@ -4,7 +4,7 @@ format: gfm
 editor: visual
 ---
 
-```{r}
+```{r include=FALSE}
 library(tidyverse)
 library(knitr)
 library(dslabs)
@@ -137,7 +137,7 @@ head(q_4a) |> kable()
 
 `polling_margin:` difference between adjpoll_clinton and adjpoll_trump `actual_margin:` difference between clinton and trump `polling_error:` difference between polling_margin and actual_margin `predicted_winner:` predicted winner based on adjpoll_clinton and adjpoll_trump `result = ifelse(winner == predicted_winner, "correct prediction", str_c("unexpected ", winner, " win"))` Keep only the columns state, polling_error, result, electoral_votes. Name the new dataset q_4b and show its first 6 rows.\*\*
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 q_4b <- 
 left_join(q_4a,q_1b) |> 
 mutate(poll_margin=adjpoll_clinton-adjpoll_trump) |> 
@@ -151,8 +151,10 @@ q_4b |> select(state,polling_error,result,electoral_votes) |> head() |> kable()
 
 **4c. Generate the following plot with the q_4b dataset. Use chunk options to adjust the dimensions of the plot to make it longer than the default dimension. Based on this plot, where did the polls get wrong in the 2016 election?**
 
-```{r fig.height=7, fig.width=7}
+```{r fig.height=7, fig.width=7, warning=FALSE}
 q_4b |> 
 ggplot() + geom_point(mapping=aes(y=state,x=polling_error,
           color=result,size=electoral_votes,fig.height=50))
 ```
+
+Answer: The unexpected results were in Florida, Wisconsin, and Michigan which are generally considered swing states.
