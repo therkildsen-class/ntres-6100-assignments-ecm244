@@ -29,7 +29,7 @@ for (cntry in country_list) {
 # Europe for loop ---------------------------------------------------------
 
 
-gap_europe <- gapminder |> 
+gap_europe <- gapminder_est |> 
 filter(continent=="Europe") |> 
 mutate(gdp=gdp_per_cap*pop)
 
@@ -38,6 +38,8 @@ country_list <- unique(gap_europe$country)
 dir.create("gap_figs/europe") 
 
 for (cntry in country_list) {
+  
+  print(str_c("plotting", cntry))
   
   ## filter the country to plot
   gap_to_plot <- gap_europe |>
@@ -49,9 +51,27 @@ for (cntry in country_list) {
     ## add title and save
     labs(title = str_c(cntry, "GDP", sep = " "))
   
+  if (any(gapminder_est$estimated == "yes")) {
+    print(str_c(cntry, "data is estimated"))
+    
+    my_plot <-my_plot + labs(subtitle = "Estimated data")  
+  }
+  
+  else {(print(str_c(cntry, "reported data")))
+  
+  my_plot <-my_plot + labs(subtitle = "Estimated data")}  
+  
   ## add the gap_figs/ folder
   ggsave(filename = str_c("gap_figs_europe/", cntry, "_gdp.png", sep = ""), plot = my_plot)
 } 
 
+
+
 #str_c binds together different text strings 
+
+est <- read_csv('https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/countries_estimated.csv')
+gapminder_est <- left_join(gapminder, est) |> 
+rename("life_exp" = lifeExp, "gdp_per_cap" = gdpPercap)
+
+gapminder_est 
 
