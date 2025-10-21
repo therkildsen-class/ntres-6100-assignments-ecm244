@@ -28,6 +28,11 @@ for (cntry in country_list) {
 
 # Europe for loop ---------------------------------------------------------
 
+est <- read_csv('https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/countries_estimated.csv')
+gapminder_est <- left_join(gapminder, est) |> 
+  rename("life_exp" = lifeExp, "gdp_per_cap" = gdpPercap)
+
+gapminder_est 
 
 gap_europe <- gapminder_est |> 
 filter(continent=="Europe") |> 
@@ -39,7 +44,7 @@ dir.create("gap_figs/europe")
 
 for (cntry in country_list) {
   
-  print(str_c("plotting", cntry))
+  print(str_c("plotting", cntry, sep = " "))
   
   ## filter the country to plot
   gap_to_plot <- gap_europe |>
@@ -52,12 +57,12 @@ for (cntry in country_list) {
     labs(title = str_c(cntry, "GDP", sep = " "))
   
   if (any(gapminder_est$estimated == "yes")) {
-    print(str_c(cntry, "data is estimated"))
+    print(str_c(cntry, "data is estimated", sep = " "))
     
     my_plot <-my_plot + labs(subtitle = "Estimated data")  
   }
   
-  else {(print(str_c(cntry, "reported data")))
+  else {(print(str_c(cntry, "reported data", sep = " ")))
   
   my_plot <-my_plot + labs(subtitle = "Estimated data")}  
   
@@ -69,9 +74,4 @@ for (cntry in country_list) {
 
 #str_c binds together different text strings 
 
-est <- read_csv('https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/countries_estimated.csv')
-gapminder_est <- left_join(gapminder, est) |> 
-rename("life_exp" = lifeExp, "gdp_per_cap" = gdpPercap)
-
-gapminder_est 
 
