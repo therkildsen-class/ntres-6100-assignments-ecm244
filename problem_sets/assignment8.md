@@ -204,7 +204,7 @@ mass2[i]= a_values[i]*dinosaur_lengths[i]^ b_values[i]
 ```
 
        user  system elapsed 
-      0.001   0.000   0.002 
+      0.002   0.000   0.001 
 
 Another instance where loops are useful is data input / output in batch.
 We’ve learned how to make plots and output them in batch in class, so in
@@ -345,7 +345,9 @@ for (year in start:end){
   select(Year,Month,wave_height,temp) |> 
   group_by(Month) |> 
   mutate(mean_temp=mean(temp)) |> 
-  mutate(mean_height=mean(wave_height))
+  mutate(mean_height=mean(wave_height)) |> 
+   mutate(mean_height=replace_na(mean_height,0)) |> 
+  mutate(mean_temp=replace_na(mean_temp,0))
 
   df_combined <- bind_rows(df_combined,df) 
 }
@@ -404,22 +406,10 @@ for (year in start:end){
 df_combined |> ggplot(mapping=aes(x=Month,y=mean_temp)) + geom_point() +geom_line()
 ```
 
-    Warning: Removed 20992 rows containing missing values or values outside the scale range
-    (`geom_point()`).
-
-    Warning: Removed 1477 rows containing missing values or values outside the scale range
-    (`geom_line()`).
-
 ![](assignment8_files/figure-commonmark/unnamed-chunk-10-1.png)
 
 ``` r
 df_combined |> ggplot(mapping=aes(x=Month,y=mean_height)) + geom_point() +geom_line()
 ```
-
-    Warning: Removed 44658 rows containing missing values or values outside the scale range
-    (`geom_point()`).
-
-    Warning: Removed 3289 rows containing missing values or values outside the scale range
-    (`geom_line()`).
 
 ![](assignment8_files/figure-commonmark/unnamed-chunk-10-2.png)

@@ -154,10 +154,13 @@ for (year in start:end){
   select(Year,Month,wave_height,temp) |> 
   group_by(Month) |> 
   mutate(mean_temp=mean(temp)) |> 
-  mutate(mean_height=mean(wave_height))
+  mutate(mean_height=mean(wave_height)) |> 
+   mutate(mean_height=replace_na(mean_height,0)) |> 
+  mutate(mean_temp=replace_na(mean_temp,0))
 
   df_combined <- bind_rows(df_combined,df) 
 }
+
 
 df_combined |> ggplot(mapping=aes(x=Month,y=mean_temp)) + geom_point() +geom_line()
 
