@@ -30,6 +30,11 @@ sequences = c("ttgaatgccttacaactgatcattacacaggcggcatgaagcaaaaatatactgtgaaccaatgc
               "guuuccuacaguauuugaugagaaugagaguuuacuccuggaagauaauauuagaauguuuacaacugcaccugaucagguggauaaggaagaugaagacu", 
               "gataaggaagaugaagacutucaggaaucuaauaaaaugcacuccaugaauggauucauguaugggaaucagccggguc")
 
+dna_rna_list <- NULL
+
 for (seq in sequences) {
-  dna_or_rna(seq)
+  dna_rna_list[seq] <- dna_or_rna(seq)
 }
+
+dna_rna_list
+
