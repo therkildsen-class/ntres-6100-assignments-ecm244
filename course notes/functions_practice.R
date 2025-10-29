@@ -56,23 +56,19 @@ est <- read_csv('https://raw.githubusercontent.com/OHI-Science/data-science-trai
 gapminder_est <- gapminder |> 
   left_join(est)
 
-gap_europe <- gapminder_est |> 
-  filter(continent=="Europe") |> 
-  mutate(gdp=gdp_per_cap*pop)
-
-print_plot <- function (cntry) {
+print_plot <- function (cntry,stat="gdp_per_cap") {
   
-  print(str_c("Plotting ", cntry))
+  print(str_c("Plotting ", cntry, filetype=pdf))
   
-  gap_to_plot <- gap_europe |> 
+  gap_to_plot <- gapminder_est |> 
     filter(country == cntry)
   
-  my_plot <- ggplot(data = gap_to_plot, mapping = aes(x = year, y = gdp_tot)) +
+  my_plot <- ggplot(data = gap_to_plot, mapping = aes(x = year, y = get(stat))) +
     geom_point() +
     labs(title = str_c(cntry, "GDP", sep = " "), 
          subtitle = ifelse(any(gap_to_plot$estimated == "yes"), "Estimated data", "Reported data"))
   
-  ggsave(filename = str_c("figures/europe/", cntry, "_gdp_tot.png", sep = ""), plot = my_plot)
+  ggsave(filename = str_c("gap_figs/", cntry, "-",stat,"." ,"filetype", sep = ""), plot = my_plot)
   
 }
 
